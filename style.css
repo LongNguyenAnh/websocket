@@ -25,6 +25,10 @@ table {
 a { text-decoration: none; color: #888; }
 a:hover { text-decoration: underline; color: #aaa; }
 
+#container {
+  width:900px;
+  margin:0 2em 0 0;
+}
 #loading, #connect {
   background: #22252a;
   position: fixed;
@@ -37,7 +41,6 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #loading { z-index: 10000000; }
 #connect { z-index: 10000001; }
-
 #loading p, #connect fieldset  {
   font-family: DejaVu Sans Mono, fixed; 
   width: 30em;

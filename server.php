@@ -25,7 +25,7 @@ class WebSocket{
 		while(true){
 			$changedSockets = $this->socketsArray;
 			//watch sockets for changes
-			$numChanges = socket_select($changedSockets,$write=NULL,$except=NULL,NULL);
+			$numChanges = socket_select($changedSockets,$write,$except,NULL);
 			if($numChanges>0) {
 				foreach($changedSockets as $socket){
 					if($socket==$this->newSocket){
@@ -93,7 +93,11 @@ class WebSocket{
 
 	function doHandShake($client,$buffer){
 		$this->log("{$buffer}\r\n");
-		list($resource,$host,$origin,$version,$key,$key1,$key2,$l8b) = $this->getHeaders($buffer);
+		list($resource,$connection,$host,$origin,$version,$key,$key1,$key2,$l8b) = $this->getHeaders($buffer);
+		
+		if($connection != "Upgrade") {
+			return false;
+		}
 
 		if(!$key) {		
 			$upgrade  = "HTTP/1.1 101 WebSocket Protocol Handshake\r\n".
@@ -145,10 +149,13 @@ class WebSocket{
 	}
 
 	function getHeaders($req){
-		$resource=$host=$origin=$version=$key=$key1=$key2=null;
+		$resource=$connection=$host=$origin=$version=$key=$key1=$key2=null;
 
 		if(preg_match("/GET (.*) HTTP/"               ,$req,$match)){ 
 			$resource=$match[1];
+		}
+		if(preg_match("/Connection: (.*)\r\n/",$req,$match)){ 
+			$connection=$match[1];
 		}
 		if(preg_match("/Host: (.*)\r\n/"              ,$req,$match)){ 
 			$host=$match[1];
@@ -174,7 +181,7 @@ class WebSocket{
 		if($match=substr($req,-8)){
 			$l8b=$match;
 		}
-		return array($resource,$host,$origin,$version,$key,$key1,$key2,$l8b);
+		return array($resource,$connection,$host,$origin,$version,$key,$key1,$key2,$l8b);
 	}
 
 	function getClientSocket($socket){

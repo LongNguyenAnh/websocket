@@ -6,6 +6,7 @@
 
 </head>
 <body>
+<div id="container">
 	<h3>WebSocket Demo</h3>
 	<div>User Name
 		<input id="name" type="textbox"/>
@@ -14,18 +15,10 @@
 	<div id="log"></div>
 
 	<div id="toolbar">
-		<!--ul id="status">
-			<li><a id="usersLink" href="#">5 users</a></li>
-			<li>uptime: <span id="uptime">?</span></li>
-			<li>memory: <span id="rss">?</span>mb RSS</li>
-			</ul-->
 			<input id="entry" type="textbox" onkeypress="onkey(event)"/>
 			<button onclick="send()">Send</button>
 			<button onclick="quit()">Quit</button>
 	</div>
-
-		<!--input id="msg" type="textbox" onkeypress="onkey(event)"/>
-
-<div id="status"></div-->
+</div> <!--container-->
 </body>
 </html>
