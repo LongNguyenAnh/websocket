@@ -1,10 +1,29 @@
 <?php  
 
+class Client{
+	var $socket;
+	var $processed;
+}
+
+//dummy class for testing
+class QuestionAnswer {
+	var $question="How much wood could a woodchuck chuck if a woodchuck could chuck wood";
+	var $answers = ["A::2","B::3","C::4","D::5"];
+	var $count= [0,0,0,0];
+}
+
 class WebSocket{
 	var $newSocket;
 	var $socketsArray = array();
 	var $clientsArray   = array();
-	var $debug   = true;
+	var $debugMode   = true;
+	
+	//corresponding message type
+	class MessageType {
+		const chat = 0;
+		const question = 1;
+		const selection = 2;
+	}
 
 	function __construct($address,$port){
 		error_reporting(E_ALL);
@@ -18,9 +37,9 @@ class WebSocket{
 		socket_set_nonblock($this->newSocket);
 		$this->socketsArray[] = $this->newSocket;
 		//log console message
-		$this->say("Server Started : ".date("Y.m.d"));
-		$this->say("Listening on   : ".$address." port ".$port);
-		$this->say("Master socket  : ".$this->newSocket."\n");
+		$this->log("Server Started : ".date("Y.m.d")."\n");
+		$this->log("Listening on   : ".$address." port ".$port."\n");
+		$this->log("Master socket  : ".$this->newSocket."\n");
 
 		while(true){
 			$changedSockets = $this->socketsArray;
@@ -32,24 +51,25 @@ class WebSocket{
 						//accept the new socket and check for errors
 						$newSocketResource=socket_accept($socket);
 						if(!$newSocketResource){
-							$this->log("socket_accept() failed");
+							$this->log("socket_accept() failed\n");
 						}
 						else{ 
 							$this->connect($newSocketResource);
 						}
 					}
 					else {
-						$bytes = socket_recv($socket,$buffer,1024,0);
+						$bytes = socket_recv($socket,$buffer,2048,0);
+						
 						if($bytes===0){ 
 							$this->disconnect($socket); 
 						}
 						else{
 							$client = $this->getClientSocket($socket);
-							if(!$client->handshake){
+							if(!$client->processed){
 								$this->doHandShake($client,$buffer);
 							}
 							else{
-								$this->process($client,$this->unmask($buffer));
+								$this->processMessage($client,$buffer);
 							}
 						}
 					}
@@ -58,18 +78,22 @@ class WebSocket{
 		}
 	}
 
-	function process($client,$msg){
+	function processMessage($client,$data){
 
 		foreach($this->clientsArray as $client)
 		{
-			$this->send($client->socket,$msg);
+			$parsedMsg = json_decode($data);
+			switch($parsedMsg->{'type'}) {
+				case MessageType::chat:
+					$this->send($client->socket,$this->decode($data));
+					break;
+			}
 		}
 	}
 
-	function send($client,$buffer){ 
-		$msg = $this->encode($buffer);
+	function send($client,$data){ 
+		$msg = $this->encode($data);
 		$sentMsg=socket_write($client,$msg,strlen($msg));
-		$this->say("Sending ".$msg." to ".$client);
 	} 
 
 	function connect($socket){
@@ -92,9 +116,8 @@ class WebSocket{
 	}
 
 	function doHandShake($client,$buffer){
-		$this->log("{$buffer}\r\n");
+		$this->debug("{$buffer}\r\n");
 		list($resource,$connection,$host,$origin,$version,$key,$key1,$key2,$l8b) = $this->getHeaders($buffer);
-		
 		if($connection != "Upgrade") {
 			return false;
 		}
@@ -116,8 +139,8 @@ class WebSocket{
 				"\r\n\r\n";
 		}
 		socket_write($client->socket,$upgrade,strlen($upgrade));
-		$client->handshake=true;
-		$this->log($upgrade);
+		$client->processed=true;
+		$this->log($upgrade."\n");
 		return true;
 	}
 
@@ -126,13 +149,13 @@ class WebSocket{
 		//Get the numbers
 		preg_match_all('/([\d]+)/', $key1, $key1_num);
 		preg_match_all('/([\d]+)/', $key2, $key2_num);
-		//Number crunching [/bad pun]
+		//Number crunching
 		$this->log("Key1: " . $key1_num = implode($key1_num[0]) );
 		$this->log("Key2: " . $key2_num = implode($key2_num[0]) );
 		//Count spaces
 		preg_match_all('/([ ]+)/', $key1, $key1_spc);
 		preg_match_all('/([ ]+)/', $key2, $key2_spc);
-		//How many spaces did it find?
+		//How many spaces did it find
 		$this->log("Key1 Spaces: " . $key1_spc = strlen(implode($key1_spc[0])) );
 		$this->log("Key2 Spaces: " . $key2_spc = strlen(implode($key2_spc[0])) );
 		//Some math
@@ -151,32 +174,29 @@ class WebSocket{
 	function getHeaders($req){
 		$resource=$connection=$host=$origin=$version=$key=$key1=$key2=null;
 
-		if(preg_match("/GET (.*) HTTP/"               ,$req,$match)){ 
+		if(preg_match("/GET (.*) HTTP/",$req,$match)){ 
 			$resource=$match[1];
 		}
 		if(preg_match("/Connection: (.*)\r\n/",$req,$match)){ 
 			$connection=$match[1];
 		}
-		if(preg_match("/Host: (.*)\r\n/"              ,$req,$match)){ 
+		if(preg_match("/Host: (.*)\r\n/",$req,$match)){ 
 			$host=$match[1];
 		}
-		if(preg_match("/Origin: (.*)\r\n/"            ,$req,$match)){ 
+		if(preg_match("/Origin: (.*)\r\n/",$req,$match)){ 
 			$origin=$match[1];
 		}
 		if(preg_match("/Sec-WebSocket-Key1: (.*)\r\n/",$req,$match)){ 
 			$key1=$match[1];
-			$this->log("Sec Key1: ".$key1);
 		}
 		if(preg_match("/Sec-WebSocket-Key2: (.*)\r\n/",$req,$match)){ 
 			$key2=$match[1];
-			$this->log("Sec Key2: ".$key2);
 		}
 		if(preg_match("/Sec-WebSocket-Key: (.*)\r\n/",$req,$match)){
 			$key=$match[1];
-			$this->log("WebSocket-key: ".$key);
 		}
 		if(preg_match("/Sec-WebSocket-Version (.*)\r\n/",$req,$match)) {
-			$version = $match[1];
+			$version=$match[1];
 		}
 		if($match=substr($req,-8)){
 			$l8b=$match;
@@ -192,51 +212,86 @@ class WebSocket{
 		return $found;
 	}
 
-	function     say($msg){ echo $msg."\n"; }
-	function     log($msg){ if($this->debug){ echo $msg."\n"; } }
-	function    wrap($msg){ return chr(0).$msg.chr(255); }
+	function  log($msg){ echo $msg; }
+	function  debug($msg){ 
+		if($this->debugMode){
+			echo $msg;
+		}
+	}
+	function  wrap($msg){ return chr(0).$msg.chr(255); }
 	function  unwrap($msg){ return substr($msg,1,strlen($msg)-2); }
-	private function unmask($payload) {
+	
+	function decode($payload) {
+		if($this->debugMode) {
+			for($i=0;$i<strlen($payload);$i++) {
+				$this->debug("0x".dechex(ord($payload[$i]))."|");
+			}
+			$this->debug("\n");
+		}
+		//Decoding Protocol
+		//the first byte is always 0x81
+		//and the first bit of the second byte is always 1,
+		//AND with 127 to get the length
 	    $length = ord($payload[1]) & 127;
-
+		//if the length is 126, then the following
+		//two bytes are used for the length
+		//the mask is then at index 4
 	    if($length == 126) {
 	        $masks = substr($payload, 4, 4);
 	        $data = substr($payload, 8);
 	    }
+		//if the length is 127, then the following eight
+		//bytes are used for the length
+		//the mask is then at index 10
 	    elseif($length == 127) {
 	        $masks = substr($payload, 10, 4);
 	        $data = substr($payload, 14);
 	    }
+		//normal case
 	    else {
 	        $masks = substr($payload, 2, 4);
 	        $data = substr($payload, 6);
 	    }
-
 	    $text = '';
 	    for ($i = 0; $i < strlen($data); ++$i) {
+			$this->debug($data[$i] ^ $masks[$i%4]."-");
 	        $text .= $data[$i] ^ $masks[$i%4];
 	    }
+		$this->debug("\n");
 	    return $text;
 	}
-	private function encode($text)
+	function encode($text)
 	{
-	    // 0x1 text frame (FIN + opcode)
-	    $b1 = 0x80 | (0x1 & 0x0f);
+	/*
+	bits 4-7 represent the opcode
+	%x1 denotes a UTF-8 text frame
+	%x2 denotes a binary frame
+	%x3-7 are reserved for further non-control frames
+	%x8 denotes a connection close
+	%x9 denotes a ping
+	%xA denotes a pong
+	%xB-F are reserved for further control frames
+	*/
+		$opcode = 0x01;
+	    $b1 = 0x80|$opcode;
 	    $length = strlen($text);
+		$this->debug("buffer length is: ".$length."\n");
 
-	    if($length <= 125)
+	    if($length <= 125) {
 	        $header = pack('CC', $b1, $length);
-	    elseif($length > 125 && $length < 65536)
-	        $header = pack('CCS', $b1, 126, $length);
-	    elseif($length >= 65536)
+		}
+	    elseif($length > 125 && $length < 65536) {
+			//pack the length as unsigned short (big endian byte order)
+	        $header = pack('CCn', $b1, 126, $length);
+		}
+	    elseif($length >= 65536) {
+			//pack the length as unsigned long (big endian)
 	        $header = pack('CCN', $b1, 127, $length);
-
+		}		
+		$this->debug($header.$text."\n");
+		
 	    return $header.$text;
 	}
 }
 
-class Client{
-	var $socket;
-	var $handshake;
-}
 ?>

@@ -7,7 +7,7 @@ body {
 
 body, table {
   font-family: DejaVu Sans Mono, fixed; 
-  font-size: 14pt;
+  font-size: 18pt;
   line-height: 150%;
 }
 tr,td,table {
@@ -21,13 +21,17 @@ table {
   border-spacing: 0
 }
 
-
 a { text-decoration: none; color: #888; }
 a:hover { text-decoration: underline; color: #aaa; }
 
 #container {
-  width:900px;
-  margin:0 2em 0 0;
+  width:800px;
+  margin: 2em 2em 2em 2em;
+}
+#choices {
+	background: #22252a;
+	width:400px;
+	margin-left: 2em;
 }
 #loading, #connect {
   background: #22252a;
@@ -49,7 +53,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #toolbar {
   position: fixed;
-  width: 100%; 
+  width: 900px; 
   bottom: 0;
 }
 
