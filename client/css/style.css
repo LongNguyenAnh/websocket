@@ -1,0 +1,229 @@
+body {
+  padding: 0;
+  margin: 0;
+  background: #22252a;
+  color: #eee;
+}
+
+body, table {
+  font-family: DejaVu Sans Mono, fixed; 
+  font-size: 14pt;
+  line-height: 150%;
+}
+tr,td,table {
+  padding: 0;
+  margin: 0;
+  outline-width: 0;
+  border-width: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0
+}
+
+a { text-decoration: none; color: #888; }
+a:hover { text-decoration: underline; color: #aaa; }
+
+#choices {
+	background: #22252a;
+	width:400px;
+	margin-left: 2em;
+}
+#loading, #connect {
+  background: #22252a;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+}
+
+#loading { z-index: 10000000; }
+#connect { z-index: 10000001; }
+#loading p, #connect fieldset  {
+  font-family: DejaVu Sans Mono, fixed; 
+  width: 30em;
+  border: 0;
+}
+
+#toolbar {
+  position: fixed;
+  width: 900px; 
+  bottom: 0;
+}
+
+#users
+{
+  position: fixed;
+  z-index:500;
+  background-color: #777;
+  opacity: 0.75;
+  -moz-opacity: 0.75;
+  filter:alpha(opacity=5);
+  width: 200px;
+  height: 35px;
+  right: 25px;
+  top: 0;
+  color: #000;
+  padding: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+#myusernameform { 
+  margin-left: 0px;
+}
+
+#myusernameform input.editable { 
+  border: 1px solid #444444;
+  height: 25px;
+  background-color: #fff;
+  margin-left: 15px;
+}
+
+#myusernameform .editactive, #myusernameform .editempty {
+  background: white;  border-left: 1px solid #c3c3c3;
+  border-top: 1px solid #c3c3c3;
+  border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6;
+  color: #000
+}
+
+#myusernameedit { 
+  background: transparent;
+  border: 0;
+  color: #FFFFFF;
+  font-size: .75em;
+  height: 12px;
+  margin: 0px;
+  padding: 3px;
+  width: 117px;
+}
+
+#myswatch { 
+  background: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+#myswatchbox { 
+  background: transparent;
+  border: 1px solid #000000;
+  cursor: pointer;
+  height: 24px;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  width: 24px;
+}
+
+#chatbox { 
+  background-color: #F7F7F7;
+  border-left: 1px solid #999999;
+  border-right: 1px solid #999999;
+  border-top: 1px solid #999999;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  bottom: 0px;
+  display: blocked;
+  height: 200px;
+  padding: 3px 3px 10px;
+  position: fixed;
+  right: 25px;
+  width: 200px;
+  z-index: 400;
+}
+
+#titlebar { 
+  bottom: 2px;
+  color: #555555;
+  font-weight: 700;
+  line-height: 16px;
+  position: relative;
+}
+
+#chattext { 
+  background-color: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  bottom: 25px;
+  font-size: 12px;
+  left: 0px;
+  overflow-y: scroll;
+  position: absolute;
+  right: 0px;
+  top: 25px;
+  z-index: 500;
+}
+
+#chatinputbox { 
+  bottom: 0px;
+  left: 3px;
+  padding: 3px 2px;
+  position: absolute;
+  right: 0px;
+}
+
+#chatinput { 
+  border: 1px solid #BBBBBB;
+  float: right;
+  width: 100%;
+}
+
+#log {
+  display: block;
+  padding-bottom: 5.1em; 
+  background: inherit;
+  overflow: hidden;
+}
+
+#container{ width: 950px; margin: 0 auto; }
+
+#content { 
+  left: 20px; 
+  width: 650px;
+  height: 500px;
+  position: absolute;
+}
+
+#right-bar{ float: right; width: 300px; border: 2px strong; border-color: #cccccc;}
+#chat-view{position: absolute; bottom: 0;}
+#extra{ float: left; clear: left; width: 180px; }
+#footer{ clear: both; width: 100%; }
+
+/* not very important info */
+.notice td, .join td, .part td, .message .date { color: #555; }
+.error td { color: #933; }
+.personal .nick, .notice .nick { color: #cd5; }
+
+.message {
+  margin: 0.1em 0;
+}
+
+.message td {
+  vertical-align: top;
+}
+
+.nick { 
+  font-weight: bold;
+  padding: 0 1em 0 0.5em;
+}
+
+.nick a {
+  color: inherit;
+}
+
+#toolbar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#toolbar li {
+  display: block; 
+  float: left;
+  margin: 0 2em 0 0;
+}
+
+#usersLink {
+  color: inherit;
+}

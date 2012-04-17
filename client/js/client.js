@@ -7,7 +7,7 @@ var MESSAGETYPE = {
 	userSelected : 2,
 	updateResults: 3
 };
-var PARSEDMESSAGE = [];
+
 function guidGenerator() {
     var S4 = function() {
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -111,7 +111,7 @@ function onSelect() {
 
 function onkey(event){
 	if(event.keyCode==13){
-		sendMsg(($("entry").value),MESSAGETYPE.CHAT);
+		sendMsg(($("entry").value),MESSAGETYPE.chat);
 	} 
 }
 
