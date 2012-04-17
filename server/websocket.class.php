@@ -12,14 +12,6 @@ class QuestionAnswer {
 	var $count= [0,0,0,0];
 }
 
-//enum class for message type
-class MessageType {
-		const chat = 0;
-		const requestQuestion = 1;
-		const userSelected = 2;
-		const updateResults = 3;
-}
-
 class WebSocket{
 	var $newSocket;
 	var $socketsArray = array();
@@ -80,14 +72,15 @@ class WebSocket{
 	}
 
 	function processMessage($client,$data){
-		$qanda = new QuestionAnswer();
 		foreach($this->clientsArray as $client)
 		{	
 			$decodedMsg = $this->decode($data);
 			$parsedMsg = json_decode($decodedMsg);
 			print_r($parsedMsg);
+			$this->send($client->socket,$this->decode($data));
+			/*
 			switch($parsedMsg->type) {
-				case MessageType::chat:
+				case 
 					$this->send($client->socket,$this->decode($data));
 					break;
 				case MessageType::requestQuestion:
@@ -102,6 +95,7 @@ class WebSocket{
 				case MessageType::userSelected:
 					break;
 			}
+			*/
 		}
 	}
 

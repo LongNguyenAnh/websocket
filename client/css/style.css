@@ -144,9 +144,11 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #chattext { 
   background-color: #FFFFFF;
+  color: #000;
   border: 1px solid #FFFFFF;
   bottom: 25px;
   font-size: 12px;
+  line-height: 125%;
   left: 0px;
   overflow-y: scroll;
   position: absolute;
@@ -166,6 +168,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 #chatinput { 
   border: 1px solid #BBBBBB;
   float: right;
+  bottom: 0px;
   width: 100%;
 }
 

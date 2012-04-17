@@ -1,75 +1,86 @@
-var Slides = {
+var slidesManager = {
+   socket : null,
    translateAmount : null,
    currentSlide : null,
-   container : $('#slides'),
+   container : $('#container'),
    index : 0, 
    slides : [0],
-
-   init : function(content) {
-      this.slides = this.parseFile(content);
+   init : function(markdownFile) {
+      this.slides = this.splitContent(markdownFile);
+      //this.setSlideWidth();
       this.loadContent(this.slides[this.index]);
-      //Slides.setSlideWidth(); 
-      this.keyPress();
    },
-
-   parseFile : function (text) {
-      var rawSlides = text.split('==');
-      return rawSlides;
+   sendMsg : function(msg){
+      this.socket = clientManager.getSocket();
+      this.clientID = clientManager.getClientID();
+      var payload = {
+         type : "SLIDE_UPDATE",
+         clientID : this.clientID,
+         data : msg,
+         date : Date.now()
+      };
+      this.socket.send(JSON.stringify(payload));
    },
-   
-   markDown : function(text){
+   //split the content of the markdown document
+   //into slides
+   splitContent : function (text) {
+      var parsedSlides = text.split('==');
+      return parsedSlides;
+   },
+   //convert the markdown file to html
+   convertMarkdown : function(text){
       return (new (Showdown.converter)).makeHtml(text);
    },
-
    loadContent : function(slide) {
-      var content = document.getElementById('content');
-      content.innerHTML = this.markDown(slide);
+      $("#content").html(this.convertMarkdown(slide));
    },
-
    setSlideWidth : function() {
       var each = this.container.children('div');
       this.slideWidth = each.width() + ( parseInt( each.css('margin-right'), 10 ) );
    },
-
    keyPress : function() {
-      $( document.body ).keydown(function(e) {
-         if ( e.keyCode === 37 || e.keyCode === 39 ) {
-            e.preventDefault();
-            ( e.keyCode === 39 ) ? this.nextSlide() : this.prevSlide();
+      //use that to refer to slidesManager
+      that = this;
+      $(document).keydown(function(event) {
+         if ( event.keyCode === 39 ) {
+            that.nextSlide();
+         }
+         else if ( event.keyCode === 37 ){
+            that.prevSlide();
          }
       });
    },
-
-   nextSlide : function (){
+   nextSlide : function () {
       var slide = this.slides[++this.index];
       if (!slide){
          this.index--;
          return;
       }
-      this.loadContent(slide);
+      this.sendMsg(this.convertMarkdown(slide));
+      //this.loadContent(slide);
    },
-
-   prevSlide : function (){
+   prevSlide : function () {
       var slide = this.slides[--this.index];
       if (!slide){
          this.index++;
          return;
       }
-      this.loadContent(slide);
+      this.sendMsg(this.convertMarkdown(slide));
+      //this.loadContent(slide);
    },
-
+   getCurrentSlide : function () {
+      return currentSlide = this.slides[this.index];
+   },
    goto : function(  ) {
-      Slides.translateAmount = -Slides.slideWidth * Slides.currentSlide;  
-      Slides.animate();
+      this.translateAmount = -this.slideWidth * this.currentSlide;  
+      this.animate();
    },
-
    animate : function() {
-      Slides 
+      this 
       .container
       .children()
       .css('-webkit-transform', 'translateX(' + Slides.translateAmount + 'px)')
       .css('-moz-transform', 'translateX(' + Slides.translateAmount + 'px)')
       .css('-o-transform', 'translateX(' + Slides.translateAmount + 'px)');
-   }
-
+   },
 };

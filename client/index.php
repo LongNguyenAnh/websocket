@@ -4,7 +4,9 @@
 	<link rel="stylesheet" href="css/style.css" type="text/css" />
 	<script src="js//jquery.js"></script>
 	<script src="js/showdown.js"></script>
+	<script src="js/client.js" type="text/javascript"></script>	
 	<script src="js/slides.js"></script>
+	<script src="js/chat.js"></script>
 	<script src="js/java.js"></script>
 </head>
 <body>
@@ -31,9 +33,9 @@
 				<div id="titlebar">
 					<span id="titlelabel"></span>
 				</div>
-				<div id="chattext" class=""/>
+				<div id="chattext"></div>
 				<div id="chatinputbox">
-					<form>
+					<form onSubmit="return false">
 						<input id="chatinput" type="text" maxlength="140"/>
 					</form>
 				</div>
