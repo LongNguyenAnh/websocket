@@ -5,13 +5,6 @@ class Client{
 	var $processed;
 }
 
-//dummy class for testing
-class QuestionAnswer {
-	var $question="How much wood could a woodchuck chuck if a woodchuck could chuck wood?";
-	var $answers = '{"Two","Twenty","One Hundred","Fifty"}';
-	var $count= [0,0,0,0];
-}
-
 class WebSocket{
 	var $newSocket;
 	var $socketsArray = array();
@@ -158,14 +151,14 @@ class WebSocket{
 		preg_match_all('/([\d]+)/', $key1, $key1_num);
 		preg_match_all('/([\d]+)/', $key2, $key2_num);
 		//Number crunching
-		$this->log("Key1: " . $key1_num = implode($key1_num[0]) );
-		$this->log("Key2: " . $key2_num = implode($key2_num[0]) );
+		$this->debug("Key1: " . $key1_num = implode($key1_num[0]) );
+		$this->debug("Key2: " . $key2_num = implode($key2_num[0]) );
 		//Count spaces
 		preg_match_all('/([ ]+)/', $key1, $key1_spc);
 		preg_match_all('/([ ]+)/', $key2, $key2_spc);
 		//How many spaces did it find
-		$this->log("Key1 Spaces: " . $key1_spc = strlen(implode($key1_spc[0])) );
-		$this->log("Key2 Spaces: " . $key2_spc = strlen(implode($key2_spc[0])) );
+		$this->debug("Key1 Spaces: " . $key1_spc = strlen(implode($key1_spc[0])) );
+		$this->debug("Key2 Spaces: " . $key2_spc = strlen(implode($key2_spc[0])) );
 		//Some math
 		$key1_sec = pack("N",$key1_num / $key1_spc); //Get the 32bit secret key
 		$key2_sec = pack("N",$key2_num / $key2_spc);

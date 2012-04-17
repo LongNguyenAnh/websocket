@@ -6,6 +6,7 @@ var chatManager = {
 		$(document).keydown(function(event) {
 			if ( event.keyCode === 13 ) {
 				that.sendMsg($("#chatinput").val());
+				$("#chatinput").html("");
 			}
 		});
 	},	
