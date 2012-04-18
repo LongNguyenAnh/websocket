@@ -1,4 +1,5 @@
 var token=": ";
+
 var chatManager = {
 	socket : null,
 	clientID : null,
@@ -14,21 +15,26 @@ var chatManager = {
 	},	
 	sendMsg : function(text){
 		this.socket = clientManager.getSocket();
+		this.clientID = clientManager.clientID;
+		this.clientColor = clientManager.clientColor;
 		var payload = {
 			type : "CHAT_MESSAGE",
 			clientID : this.clientID,
 			clientName : $("#myusernameedit").val(),
 			data : text,
+			color : this.clientColor,
 			date : Date.now()
 		};
-		this.socket.send(JSON.stringify(payload));
-	},
-	receiveMsg : function(msg) {
-		if($("#myusernameedit").val() === "")
+		if(payload.clientName === "")
 		{
 			alert("Please input a Name");
 		}
 		else
-		{$("#chattext").append("<b>" + msg.clientName + "</b>" + token + msg.data +"<br>");}
+		{
+			this.socket.send(JSON.stringify(payload));
+		}
+	},
+	receiveMsg : function(msg) {
+		$("#chattext").append('<span style="color:'+ msg.color + '">' + msg.clientName + '</span>' + token + msg.data +'<br>');
 	}
 }

@@ -1,11 +1,16 @@
+var colorsArray = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
+	colorsArray.sort(function(a,b) { return Math.random() > 0.2; } );
 var clientManager = {
 	socket : null,
 	url : null,
+	clientID : null,
+	clientColor : null,
 	connect : function() {
 		var that = this;
 		this.url = window.location.hostname;
 		var host = "ws://"+this.url+":12345";
-
+		this.clientID = that.guidGenerator();
+		this.clientColor = colorsArray.shift();
 		if(this.socket==null){ 
 			this.socket = new WebSocket(host);
 		}
@@ -37,11 +42,13 @@ var clientManager = {
 		};
 		return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 	},
-	//clientID : this.guidGenerator(),
 	getSocket : function () {
 		return this.socket;
 	},
 	getClientID : function () {
 		return this.clientID;
+	},
+	getClientColor : function(){
+		return this.clientColor;
 	}
 }
