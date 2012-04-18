@@ -24,7 +24,7 @@ var clientManager = {
 		var message = JSON.parse(msg.data);
 		switch(message.type) {
 			case "CHAT_MESSAGE":
-				chatManager.receiveMsg(message.data);
+				chatManager.receiveMsg(message);
 				break;
 			case "SLIDE_UPDATE":
 				$("#content").html(message.data);
