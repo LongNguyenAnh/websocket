@@ -50,5 +50,24 @@ var clientManager = {
 	},
 	getClientColor : function(){
 		return this.clientColor;
+	},
+
+	getCookie = function(name) {
+		//name = name.replace(/([.\\+\-*:\/?!|^${}()\[\]])/g, '\\$1');
+	 	var re = new RegExp('[; ]' + name + '=([^\\s;]*)');
+	 	var sMatch = (' ' + document.cookie).match(re);
+	 
+	 	if (name && sMatch) return unescape(sMatch[1]);
+	}
+
+	setCookie = function(name,value,days) {
+		var now = new Date();
+	 	var expDate = new Date();
+	 	if (days==null || days==0) days=1;
+	 	//create date after no of "days" from now
+	 	expDate.setTime(now.getTime() + 3600000*24*days);
+	 
+	 	//create cookie with name, value and expire date
+	 	document.cookie=name+"="+escape(value)+";expires="+expDate.toUTCString();
 	}
 }

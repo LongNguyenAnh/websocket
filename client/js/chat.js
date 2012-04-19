@@ -4,6 +4,7 @@ var chatManager = {
 	socket : null,
 	clientID : null,
 	clientName : null,
+	clientType : null,
 	keyPress : function() {
 		var that = this;
 		$(document).keydown(function(event) {
@@ -17,10 +18,12 @@ var chatManager = {
 		this.socket = clientManager.getSocket();
 		this.clientID = clientManager.clientID;
 		this.clientColor = clientManager.clientColor;
+		this.clientType = clientManager.getCookie();
 		var payload = {
 			type : "CHAT_MESSAGE",
 			clientID : this.clientID,
 			clientName : $("#myusernameedit").val(),
+			clientType : this.
 			data : text,
 			color : this.clientColor,
 			date : Date.now()
@@ -31,7 +34,6 @@ var chatManager = {
 		}
 		else
 		{
-			Showdown.setCookie("User_Name",payload.clientName,1);
 			this.socket.send(JSON.stringify(payload));
 		}
 	},
