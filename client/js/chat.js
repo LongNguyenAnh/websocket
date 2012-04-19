@@ -31,6 +31,7 @@ var chatManager = {
 		}
 		else
 		{
+			Showdown.setCookie("User_Name",payload.clientName,1);
 			this.socket.send(JSON.stringify(payload));
 		}
 	},
