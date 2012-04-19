@@ -23,7 +23,7 @@ var chatManager = {
 			type : "CHAT_MESSAGE",
 			clientID : this.clientID,
 			clientName : $("#myusernameedit").val(),
-			clientType : this.
+			clientType : this.clientType,
 			data : text,
 			color : this.clientColor,
 			date : Date.now()
